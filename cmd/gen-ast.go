@@ -34,6 +34,10 @@ func defineAst(out, base string, types []string) {
 	src += fmt.Sprintln("// Generated code, do not edit.")
 	src += fmt.Sprintln("")
 	src += fmt.Sprintln("package glox")
+
+	src += defineVisitor(base, types)
+
+	// expr types
 	src += fmt.Sprintln("")
 	src += fmt.Sprintf("type %s struct {}", base)
 
@@ -47,6 +51,22 @@ func defineAst(out, base string, types []string) {
 	if err := saveFile(path, src); err != nil {
 		panic(err)
 	}
+}
+
+func defineVisitor(base string, types []string) string {
+	var src string
+
+	// visitor interface
+	src += fmt.Sprintln("")
+	src += fmt.Sprintln("type visitor interface {")
+	for _, t := range types {
+		cls := strings.TrimRight(strings.Split(t, ":")[0], " ")
+		src += fmt.Sprintf("visit%s%s(expr *%s) interface{}", cls, base, cls)
+		src += fmt.Sprintln("")
+	}
+	src += fmt.Sprintln("}")
+
+	return src
 }
 
 func defineType(base, cls, fld string) string {
@@ -88,6 +108,13 @@ func defineType(base, cls, fld string) string {
 	src += fmt.Sprintf(strings.Join(args, ","))
 	src += fmt.Sprintln("}")
 	src += fmt.Sprintln("}")
+
+	// accept func
+	src += fmt.Sprintf("func (n *%s) accept(v visitor) interface{} {", cls)
+	src += fmt.Sprintln("")
+	src += fmt.Sprintf("return v.visit%s%s(n)", cls, base)
+	src += fmt.Sprintf("}")
+	src += fmt.Sprintln("")
 
 	return src
 }
