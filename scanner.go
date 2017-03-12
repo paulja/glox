@@ -59,7 +59,7 @@ func (s *Scanner) Scan() {
 		s.scanToken()
 	}
 
-	s.T <- newToken(TokenEOF, "EOF", nil, s.line)
+	s.T <- NewToken(TokenEOF, "EOF", nil, s.line)
 	s.Done <- true
 }
 
@@ -211,7 +211,7 @@ func (s *Scanner) peekNext() rune {
 
 func (s *Scanner) addToken(t TokenType, lit interface{}) {
 	lex := s.source[s.start:s.current]
-	s.T <- newToken(t, lex, lit, s.line)
+	s.T <- NewToken(t, lex, lit, s.line)
 }
 
 func (s *Scanner) string() {

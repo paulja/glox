@@ -61,7 +61,7 @@ type Token struct {
 	Line    int
 }
 
-func newToken(tt TokenType, lex string, lit interface{}, line int) *Token {
+func NewToken(tt TokenType, lex string, lit interface{}, line int) *Token {
 	return &Token{tt, lex, lit, line}
 }
 
